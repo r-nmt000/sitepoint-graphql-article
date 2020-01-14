@@ -4,7 +4,10 @@ import {
   GraphQLString,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLInputObjectType,
+  GraphQLID,
+  GraphQLFloat
 } from 'graphql';
 import Actors from '../data/Actors'
 import ActorType from './types/ActorType';
@@ -69,6 +72,29 @@ const schema = new GraphQLSchema({
         },
         resolve: (object, {term}, context, info) => {
           return Actors.filter(actor => actor.name.includes(term));
+        }
+      }
+    }
+  }),
+  mutation: new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+      addMovie: {
+        type: MovieType,
+        args: {
+          movie: {
+            type: new GraphQLInputObjectType({
+              name: "MovieInputArgument",
+              fields: () => ({
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                title: {type: GraphQLString},
+                image: {type: GraphQLString},
+                release_year: {type: GraphQLInt},
+                tags: {type: new GraphQLList(GraphQLString)},
+                rating: {type: GraphQLFloat},
+              })
+            })
+          }
         }
       }
     }
